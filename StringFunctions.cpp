@@ -4,11 +4,12 @@
  *
  * Created on February 16, 2013, 9:14 AM
  */
+#include "StringFunctions.h"
 #include <iostream>
 
 using namespace std;
 
-int length(char* string) {
+int length(const char* string) {
     int index = 0;
     while (string[index] != '\0') {
         index++;
@@ -92,7 +93,7 @@ bool palindrome(char* str) {
     return equal;
 }
 
-char* copy(char** destination, char* source) {
+char* copyAllocatingSpace(char** destination, char* source) {
     int size = (length(source) + 1);
     *destination = (char*) malloc(size * sizeof (char));
     char* copy = *destination;
@@ -113,7 +114,7 @@ char* copy(char** destination, char* source) {
 int toUpperCopy(char* str, char** upperCopy) {
     int res = 0;
     int size = length(str);
-    copy(upperCopy, str);
+    copyAllocatingSpace(upperCopy, str);
     toUpper(*upperCopy);
     int index = 0;
     char* aux = *upperCopy; //If I don't create this a have segment fault
@@ -181,69 +182,87 @@ char* findReverse(char* str, char* toFind) {
     return newStr;
 }
 
-int main() {
-    const int BufferSize = 200;
-    char str[] = " is a simple string";
-    char buffer[BufferSize];
-    buffer[0] = 'T';
-    buffer[1] = 'h';
-    buffer[2] = 'i';
-    buffer[3] = 's';
-    buffer[4] = '\n';
-
-    char* res = concat(buffer, str, 200);
-    printf("CONCAT: %s\n", res);
-
-    char* compare1 = "hola";
-    char* compare2 = "chau";
-    int comparation = compareTo(compare1, compare2);
-    printf("COMPARE between hola and chau : %d\n", comparation);
-
-    char* lower = "HELlo";
-    toLower(lower);
-    printf("LOWER HELlo: %s\n", lower);
-    toUpper(lower);
-    printf("UPPER hello: %s\n", lower);
-
-    reverse(lower);
-    printf("REVERSE HELLO: %s\n", lower);
-
-    char* palindrome1 = "oruro";
-    char* palindrome2 = "gfhf";
-    printf("PALINDROME oruro: %d\n", palindrome(palindrome1));
-    printf("PALINDROME gfhf: %d\n", palindrome(palindrome2));
-
-    char toCopy[] = "Sample string";
-    char* strCopied = 0;
-
-    copy(&strCopied, toCopy);
-
-    printf("COPY\nToCopy: %s\nCopied: %s\n", toCopy, strCopied);
-    toCopy[0] = 'a';
-    printf("Modified toCopy: %s\nCopied: %s\n", toCopy, strCopied);
-
-    char* strUpperCopy = 0;
-    int modifiedChars = toUpperCopy(toCopy, &strUpperCopy);
-    printf("UPPER COPY:\nToCopy: %s\nupper copied: %s\nmodified chars: %d\n", toCopy, strUpperCopy, modifiedChars);
-
-    char* strFind = "Hola como estas";
-    char* toFind = "omo";
-    char* found = find(strFind, toFind);
-    printf("Found: %s\n", found);
-
-    char* strFindReverse = "Hola como estas";
-    char* toFindReverse = "omo";
-    char* found2 = findReverse(strFindReverse, toFindReverse);
-    printf("Found: %s\n", found2);
-
-    char* a = "Hola como estas";
-    char* b = "u";
-    char* c = find(a, b);
-    printf("A: %s\n", a);
-    printf("B: %s\n", b);
-    printf("C: %s\n", c);
-
-
+void copy(char* destiny, const char* source) {
+    copy(destiny, 0, source);
 }
 
+void copy(char* destiny, int destinyInitIndex, const char* source) {
+    if (destinyInitIndex >= 0) {
+        int sourceSize = length(source);
+        int sourceIndex = 0;
+        while (sourceSize) {
+            destiny[destinyInitIndex] = source[sourceIndex];
+            sourceIndex++;
+            sourceSize--;
+            destinyInitIndex++;
+        }
+        destiny[destinyInitIndex] = '\0';
+    }
+}
 
+//int main() {
+//    const int BufferSize = 200;
+//    char str[] = " is a simple string";
+//    char buffer[BufferSize];
+//    buffer[0] = 'T';
+//    buffer[1] = 'h';
+//    buffer[2] = 'i';
+//    buffer[3] = 's';
+//    buffer[4] = '\n';
+//
+//    char* res = concat(buffer, str, 200);
+//    printf("CONCAT: %s\n", res);
+//
+//    char* compare1 = "hola";
+//    char* compare2 = "chau";
+//    int comparation = compareTo(compare1, compare2);
+//    printf("COMPARE between hola and chau : %d\n", comparation);
+//
+//    char* lower = "HELlo";
+//    toLower(lower);
+//    printf("LOWER HELlo: %s\n", lower);
+//    toUpper(lower);
+//    printf("UPPER hello: %s\n", lower);
+//
+//    reverse(lower);
+//    printf("REVERSE HELLO: %s\n", lower);
+//
+//    char* palindrome1 = "oruro";
+//    char* palindrome2 = "gfhf";
+//    printf("PALINDROME oruro: %d\n", palindrome(palindrome1));
+//    printf("PALINDROME gfhf: %d\n", palindrome(palindrome2));
+//
+//    char toCopy[] = "Sample string";
+//    char* strCopied = 0;
+//
+//    copyAllocatingSpace(&strCopied, toCopy);
+//
+//    printf("COPY\nToCopy: %s\nCopied: %s\n", toCopy, strCopied);
+//    toCopy[0] = 'a';
+//    printf("Modified toCopy: %s\nCopied: %s\n", toCopy, strCopied);
+//
+//    char* strUpperCopy = 0;
+//    int modifiedChars = toUpperCopy(toCopy, &strUpperCopy);
+//    printf("UPPER COPY:\nToCopy: %s\nupper copied: %s\nmodified chars: %d\n", toCopy, strUpperCopy, modifiedChars);
+//
+//    char* strFind = "Hola como estas";
+//    char* toFind = "omo";
+//    char* found = find(strFind, toFind);
+//    printf("Found: %s\n", found);
+//
+//    char* strFindReverse = "Hola como estas";
+//    char* toFindReverse = "omo";
+//    char* found2 = findReverse(strFindReverse, toFindReverse);
+//    printf("Found: %s\n", found2);
+//
+//    char* a = "Hola como estas";
+//    char* b = "u";
+//    char* c = find(a, b);
+//    printf("A: %s\n", a);
+//    printf("B: %s\n", b);
+//    printf("C: %s\n", c);
+//
+//
+//}
+//
+//
